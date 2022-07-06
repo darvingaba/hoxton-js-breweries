@@ -53,6 +53,15 @@ function renderHeader() {
     formEl.id = 'search-breweries-form';
     formEl.setAttribute('autocomplete', 'off');
 
+    formEl.addEventListener('submit', function(event){
+      event.preventDefault();
+      let searchTerm = formEl["search-breweries"].value;
+      let filteredBreweries = state.breweries.filter(brewery => brewery.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      mainEl.innerHTML = '';
+      state.breweries = filteredBreweries;
+      return renderBreweriesList();
+    })
+
   //     <label for="search-breweries"><h2>Search breweries:</h2></label>
         let labelEl = document.createElement('label');
         labelEl.innerText = 'Search breweries:';
@@ -67,15 +76,16 @@ function renderHeader() {
         inputEl.name = 'search-breweries';
         inputEl.type = 'text';
 
-        inputEl.addEventListener('keyup', function (e)  {
-          let searchTerm = (e.target as HTMLInputElement).value;
-          let filteredBreweries = state.breweries.filter(brewery => {
-            brewery.name.toLowerCase().includes(searchTerm.toLowerCase());
-          });
-          state.breweries = filteredBreweries;          
-          renderBreweriesList();
-          console.log(state);
-        })
+        // inputEl.addEventListener('keyup', function (event)  {
+        //   event.preventDefault();
+        //   let searchTerm = (event.target as HTMLInputElement).value;
+        //   let filteredBreweries = state.breweries.filter((brewery) => {brewery.name.toLowerCase().includes(searchTerm.toLowerCase());
+        //   });
+        //   // state.breweries=[];
+        //   state.breweries = filteredBreweries;
+        //   console.log(filteredBreweries);
+        //   renderBreweriesList();
+        // })
 
     formEl.append(labelEl, inputEl);
     headerEl.appendChild(formEl);
@@ -138,7 +148,7 @@ function renderABrewery(brewery:Brewery ,breweriesUlEl: HTMLElement) {
 
   breweriesUlEl.append(liEl);
 }
-function renderBreweriesList(){
+function renderBreweriesList() {
   let mainEl = document.querySelector("main");
   if(mainEl==null) return;
   
@@ -250,13 +260,11 @@ function renderBreweriesList(){
 
 function listenForSearch() {
   let formEl = document.querySelector<HTMLFormElement>("#select-state-form");
-  if (formEl == null) return;
   formEl?.addEventListener("submit", function(event){
     event.preventDefault();
     let searchTerm = formEl["select-state"].value;
     state.UsState=searchTerm;
     getBreweries();
-    render();
     });
 }
 
